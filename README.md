@@ -144,7 +144,7 @@ This project extends prior research into hybrid neuro-symbolic systems. HNIR-CCP
 
 ### Roadmap
 
-The high-level roadmap for this project is divided into several phases, from initial repository setup to a full evaluation harness and paper publication. For a detailed breakdown of the project plan, please see the documents in the `/plans/hnir_v2` directory.
+The high-level roadmap for this project is divided into several phases, from initial repository setup to a full evaluation harness and paper publication. See [ROADMAP.md](ROADMAP.md) for details.
 
 ### Author and Research Attribution
 - **Aravind Ravi**
@@ -153,6 +153,10 @@ The high-level roadmap for this project is divided into several phases, from ini
 - **Personal Research GitHub:** https://github.com/aravindravi-research
 - **Lab Organization GitHub:** https://github.com/Teknamin
 - **Contact:** aravind@raviaravind.com
+
+### Development Methodology
+
+This project uses AI-assisted development tooling (Claude Code) as part of its engineering workflow. All architectural decisions, design direction, and research contributions are by the author. AI tooling is used to accelerate implementation, documentation, and code generation under direct human supervision and review.
 
 ### License
 

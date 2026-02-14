@@ -33,3 +33,6 @@ htmlcov/
 # Environments
 .env
 .env.local
+
+# Local planning docs (not for public repo)
+plans/
