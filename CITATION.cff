@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Ravi"
+    given-names: "Aravind"
+    orcid: "https://orcid.org/0009-0001-0452-0754"
+    email: "aravind@raviaravind.com"
+title: "HNIR-CCP: A Conversation Control Plane"
+version: 0.1.0
+date-released: 2026-02-06
+repository-code: "https://github.com/Teknamin/hnir-ccp"
+license: "Apache-2.0"
+references:
+  - type: article
+    title: "Hybrid Neuro-Symbolic Intent Router (HNIR)"
+    doi: "https://zenodo.org/records/18110920"
+    url: "https://zenodo.org/records/18110920"

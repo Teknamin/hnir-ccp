@@ -1,0 +1,4 @@
+# Enforce review for core and policy changes
+/ccp/ @aravindravi-research
+/ccp/policy/ @aravindravi-research
+/ccp/state/ @aravindravi-research
