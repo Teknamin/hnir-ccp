@@ -36,3 +36,6 @@ htmlcov/
 
 # Local planning docs (not for public repo)
 plans/
+
+# Generated audit logs (runtime artifacts)
+*.jsonl
