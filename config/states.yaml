@@ -1,0 +1,58 @@
+initial_state: INTAKE
+
+states:
+  - name: INTAKE
+    allowed_transitions:
+      - TRIAGE
+    allowed_action_types:
+      - READ
+    timeout_seconds: 300
+    description: "Initial intake - gather information, read-only actions"
+
+  - name: TRIAGE
+    allowed_transitions:
+      - RECOMMENDATION
+      - INTAKE
+    allowed_action_types:
+      - READ
+      - WRITE
+    timeout_seconds: 600
+    description: "Assessment phase - read and write allowed"
+
+  - name: RECOMMENDATION
+    allowed_transitions:
+      - CONFIRMATION
+      - TRIAGE
+    allowed_action_types:
+      - READ
+      - WRITE
+    timeout_seconds: 600
+    description: "Recommendation phase - propose actions"
+
+  - name: CONFIRMATION
+    allowed_transitions:
+      - EXECUTION
+      - RECOMMENDATION
+    allowed_action_types:
+      - READ
+    timeout_seconds: 300
+    description: "Confirmation phase - user confirms proposed actions"
+
+  - name: EXECUTION
+    allowed_transitions:
+      - COMPLETE
+      - CONFIRMATION
+    allowed_action_types:
+      - READ
+      - WRITE
+      - DELETE
+    timeout_seconds: 900
+    description: "Execution phase - carry out confirmed actions"
+
+  - name: COMPLETE
+    allowed_transitions:
+      - INTAKE
+    allowed_action_types:
+      - READ
+    timeout_seconds: null
+    description: "Conversation complete"

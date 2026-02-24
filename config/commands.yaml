@@ -1,0 +1,62 @@
+commands:
+  - name: help
+    aliases:
+      - "?"
+      - h
+    description: "Show available commands"
+    category: general
+
+  - name: cancel
+    aliases:
+      - abort
+      - stop
+    description: "Cancel the current operation"
+    category: control
+
+  - name: undo
+    aliases:
+      - rollback
+    description: "Undo the last state transition"
+    category: control
+
+  - name: reset
+    aliases:
+      - restart
+    description: "Reset session to initial state"
+    category: control
+
+  - name: status
+    aliases:
+      - state
+      - info
+    description: "Show current session status"
+    category: general
+
+  - name: back
+    aliases:
+      - prev
+      - previous
+    description: "Go back to previous state"
+    category: control
+
+  - name: confirm
+    aliases:
+      - "yes"
+      - approve
+      - "y"
+    description: "Confirm a pending action"
+    category: confirmation
+
+  - name: deny
+    aliases:
+      - "no"
+      - reject
+      - "n"
+    description: "Deny a pending action"
+    category: confirmation
+
+  - name: escalate
+    aliases:
+      - elevate
+    description: "Escalate to higher authority"
+    category: control

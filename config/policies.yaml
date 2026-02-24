@@ -1,0 +1,38 @@
+rules:
+  - name: read_access
+    action_type: READ
+    decision: ALLOW
+    required_roles: []
+    denied_states: []
+    require_confirmation: false
+    description: "Read actions are generally allowed for all roles"
+
+  - name: write_access
+    action_type: WRITE
+    decision: ALLOW
+    required_roles:
+      - user
+    denied_states: []
+    require_confirmation: false
+    description: "Write actions allowed for authenticated users"
+
+  - name: delete_access
+    action_type: DELETE
+    decision: ALLOW
+    required_roles:
+      - admin
+    denied_states:
+      - INTAKE
+      - TRIAGE
+      - RECOMMENDATION
+      - CONFIRMATION
+    require_confirmation: true
+    description: "Delete actions require admin role and confirmation, denied in early states"
+
+  - name: irreversible_block
+    action_type: IRREVERSIBLE
+    decision: DENY
+    required_roles: []
+    denied_states: []
+    require_confirmation: false
+    description: "Irreversible actions are always denied by policy"
