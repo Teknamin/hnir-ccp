@@ -1,13 +1,14 @@
 """Baseline runner ABC, CCPRunner, and EvalRunner for the evaluation harness."""
 
 import sys
+import threading
 import time
 from abc import ABC, abstractmethod
 from pathlib import Path
 from statistics import median
-from typing import Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
-from eval.schema import ScenarioResult, TraceEntry
+from eval.schema import EVAL_TIMEOUT_SECONDS, ScenarioResult, TraceEntry
 
 # Add the project root to sys.path so ccp is importable when run as script
 _PROJECT_ROOT = Path(__file__).parent.parent
@@ -17,6 +18,40 @@ if str(_PROJECT_ROOT) not in sys.path:
 from ccp.integration.interceptor import CCPInterceptor  # noqa: E402
 from ccp.models import ActionType, ConversationState, ProposedAction, UserInput  # noqa: E402
 from ccp.state.session import Session  # noqa: E402
+
+_VALID_DECISIONS = {"ALLOW", "DENY", "REQUIRE_CONFIRMATION"}
+
+
+def run_with_timeout(
+    fn: Callable,
+    args: tuple = (),
+    kwargs: Optional[Dict[str, Any]] = None,
+    timeout: float = EVAL_TIMEOUT_SECONDS,
+) -> Tuple[Any, Optional[Exception]]:
+    """Run fn(*args, **kwargs) with a wall-clock timeout.
+
+    Returns (result, None) on success, (None, exception) on error or timeout.
+    Works for synchronous callables (uses a daemon thread).
+    """
+    if kwargs is None:
+        kwargs = {}
+    result_box: List[Any] = [None]
+    exc_box: List[Optional[Exception]] = [None]
+
+    def _target() -> None:
+        try:
+            result_box[0] = fn(*args, **kwargs)
+        except Exception as exc:  # noqa: BLE001
+            exc_box[0] = exc
+
+    t = threading.Thread(target=_target, daemon=True)
+    t.start()
+    t.join(timeout)
+    if t.is_alive():
+        return None, TimeoutError(f"Timed out after {timeout:.0f}s")
+    if exc_box[0] is not None:
+        return None, exc_box[0]
+    return result_box[0], None
 
 
 class BaselineRunner(ABC):
@@ -64,10 +99,10 @@ def _replay_setup_steps(interceptor: CCPInterceptor, entry: TraceEntry) -> None:
     """Replay setup_steps on the interceptor to establish preconditions."""
     for step in entry.setup_steps:
         if "set_state" in step:
-            # Direct state injection for test setup
+            import datetime as _dt
             interceptor.session.current_state = ConversationState[step["set_state"]]
             interceptor.session.previous_state = None
-            interceptor.session._state_entered_at = __import__("datetime").datetime.utcnow()
+            interceptor.session._state_entered_at = _dt.datetime.utcnow()
         else:
             user_input = UserInput(
                 text=step.get("user_text", ""),
@@ -78,21 +113,24 @@ def _replay_setup_steps(interceptor: CCPInterceptor, entry: TraceEntry) -> None:
 
 
 class CCPRunner(BaselineRunner):
-    """Runs scenarios through the full CCP pipeline."""
+    """Runs scenarios through the full CCP pipeline.
+
+    Latency notes:
+    - latency_shim_us == latency_e2e_us: CCP makes zero LLM calls.
+    - For control_command category, runs 3 fresh CCPInterceptor instances
+      and takes the median to smooth JIT / import warm-up.
+    """
 
     name = "ccp"
 
     def is_available(self) -> bool:
-        return True  # CCP is always available
+        return True
 
     def run_scenario(self, entry: TraceEntry) -> ScenarioResult:
-        """Run one scenario through CCPInterceptor; measures latency over 3 fresh instances."""
+        n_runs = 3 if entry.category == "control_command" else 1
         latency_samples: List[float] = []
         last_result = None
         last_interceptor = None
-
-        # For control_command category: median of 3 fresh interceptors for latency accuracy
-        n_runs = 3 if entry.category == "control_command" else 1
 
         try:
             for _ in range(n_runs):
@@ -104,31 +142,28 @@ class CCPRunner(BaselineRunner):
                 )
                 _replay_setup_steps(interceptor, entry)
 
-                user_input = UserInput(
-                    text=entry.user_text,
-                    roles=set(entry.user_roles),
-                )
+                user_input = UserInput(text=entry.user_text, roles=set(entry.user_roles))
                 proposed = _make_proposed_action(entry.proposed_action)
 
                 t0 = time.perf_counter()
                 result = interceptor.process_input(user_input, proposed)
                 t1 = time.perf_counter()
 
-                latency_samples.append((t1 - t0) * 1_000_000)  # convert to microseconds
+                latency_samples.append((t1 - t0) * 1_000_000)
                 last_result = result
                 last_interceptor = interceptor
 
-            latency_us = median(latency_samples)
-
+            shim_us = median(latency_samples)
             actual_decision = last_result.decision.value
             actual_layer = last_result.layer
             actual_reason_code = last_result.reason_code
 
-            # Audit metrics
             audit_entries = last_interceptor.audit.entries
-            audit_entry_count = len(audit_entries)
-            audit_has_reason_code = any(e.reason_code for e in audit_entries)
+            audit_count = len(audit_entries)
+            audit_has_rc = any(e.reason_code for e in audit_entries)
             audit_has_layer = any(e.layer for e in audit_entries)
+            # Schema enforced = every entry has timestamp + layer + reason_code
+            schema_enforced = audit_count > 0 and audit_has_rc and audit_has_layer
 
         except Exception as exc:
             return ScenarioResult(
@@ -142,10 +177,11 @@ class CCPRunner(BaselineRunner):
                 actual_layer="ERROR",
                 expected_reason_code=entry.expected_reason_code,
                 actual_reason_code="",
-                latency_us=0.0,
+                is_crash=True,
                 error=str(exc),
             )
 
+        is_no_decision = actual_decision not in _VALID_DECISIONS
         passed = actual_decision == entry.expected_decision
 
         return ScenarioResult(
@@ -159,10 +195,13 @@ class CCPRunner(BaselineRunner):
             actual_layer=actual_layer,
             expected_reason_code=entry.expected_reason_code,
             actual_reason_code=actual_reason_code,
-            latency_us=latency_us,
-            audit_entry_count=audit_entry_count,
-            audit_has_reason_code=audit_has_reason_code,
+            latency_shim_us=shim_us,
+            latency_e2e_us=shim_us,  # no LLM calls → shim == e2e
+            is_no_decision=is_no_decision,
+            audit_entry_count=audit_count,
+            audit_has_reason_code=audit_has_rc,
             audit_has_layer=audit_has_layer,
+            audit_schema_enforced=schema_enforced,
         )
 
 
@@ -178,18 +217,14 @@ class EvalRunner:
         self.runners: List[BaselineRunner] = runners or [CCPRunner()]
 
     def run_all(self) -> Dict[str, List[ScenarioResult]]:
-        """Run all traces through each available runner.
-
-        Returns:
-            Dict mapping runner name → list of ScenarioResults.
-        """
+        """Run all traces through each available runner."""
         results: Dict[str, List[ScenarioResult]] = {}
 
         for runner in self.runners:
             if not runner.is_available():
                 print(
                     f"  [SKIP] {runner.name}: not available "
-                    f"(missing dependencies or API key)",
+                    "(missing dependencies or API key)",
                     file=sys.stderr,
                 )
                 continue
@@ -201,10 +236,14 @@ class EvalRunner:
                 sr = runner.run_scenario(entry)
                 runner_results.append(sr)
 
-            passed = sum(1 for r in runner_results if r.passed)
             total = len(runner_results)
+            passed = sum(1 for r in runner_results if r.passed)
+            skipped = sum(1 for r in runner_results if r.is_skipped)
+            timeouts = sum(1 for r in runner_results if r.is_timeout)
+            crashes = sum(1 for r in runner_results if r.is_crash)
             print(
-                f"  [DONE] {runner.name}: {passed}/{total} passed",
+                f"  [DONE] {runner.name}: {passed}/{total - skipped} passed "
+                f"({skipped} N/A, {timeouts} timeouts, {crashes} crashes)",
                 file=sys.stderr,
             )
             results[runner.name] = runner_results

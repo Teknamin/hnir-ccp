@@ -178,14 +178,18 @@ def main() -> int:
             }
 
     for system, results_list in all_results.items():
-        ccp_runner = next((r for r in runners if r.name == system), None)
+        # Only run reproducibility for CCP (deterministic system).
+        # Running it for LLM-based baselines would be extremely slow (100×N LLM calls)
+        # and meaningless (they are non-deterministic by design).
+        is_ccp = system == "ccp"
+        ccp_runner = next((r for r in runners if r.name == system), None) if is_ccp else None
         run_fn = ccp_runner.run_scenario if ccp_runner else None
 
         all_metrics[system] = compute_all_metrics(
             results=results_list,
             traces=traces,
             run_fn=run_fn,
-            include_reproducibility=not args.no_reproducibility,
+            include_reproducibility=(is_ccp and not args.no_reproducibility),
             n_reproducibility_runs=100,
         )
         # Mark available in system_availability if not already set
@@ -210,15 +214,30 @@ def main() -> int:
     print(f"  {md_path}", file=sys.stderr)
 
     # Print summary to stdout
-    if "ccp" in all_metrics and all_metrics["ccp"]:
-        ccp_metrics = all_metrics["ccp"]
-        overall = ccp_metrics.get("policy_compliance", {}).get("overall", 0.0)
-        repro = ccp_metrics.get("reproducibility_variance")
-        inj_res = ccp_metrics.get("injection_resistance_pct", 0.0)
-        print("\nCCP Results:")
-        print(f"  Policy compliance (overall): {overall}%")
-        print(f"  Injection resistance:         {inj_res}%")
-        print(f"  Reproducibility variance:     {repro}")
+    for system, metrics in all_metrics.items():
+        if metrics is None:
+            continue
+        pc = metrics.get("policy_compliance", {})
+        rel = metrics.get("reliability", {})
+        lat = metrics.get("latency", {})
+        inj = metrics.get("injection_resistance_pct")
+        repro = metrics.get("reproducibility_variance")
+        shim_p50 = lat.get("shim", {}).get("p50_us")
+        e2e_p50 = lat.get("e2e", {}).get("p50_us")
+        print(f"\n{system} Results:")
+        print(f"  Policy compliance (overall):  {pc.get('overall')}%")
+        print(f"  Intersection-set compliance:  {pc.get('intersection_set_overall')}%")
+        print(f"  Injection resistance:          {inj}%")
+        print(f"  Reliability — timeout:         {rel.get('timeout_rate')}%  "
+              f"crash: {rel.get('crash_rate')}%  "
+              f"no-decision: {rel.get('no_decision_rate')}%  "
+              f"N/A: {rel.get('na_rate')}%")
+        if shim_p50 is not None:
+            print(f"  Latency shim P50:             {shim_p50:.1f}μs")
+        if e2e_p50 is not None:
+            print(f"  Latency e2e P50:              {e2e_p50:.1f}μs")
+        if repro is not None:
+            print(f"  Reproducibility variance:     {repro}")
 
     # --- Determine exit code ---
     # Exit 0 only if CCP achieves 100% on all deterministic scenarios
