@@ -39,3 +39,13 @@ plans/
 
 # Generated audit logs (runtime artifacts)
 *.jsonl
+# But allow committed eval trace files
+!eval/traces/control.jsonl
+!eval/traces/state.jsonl
+!eval/traces/policy.jsonl
+!eval/traces/adversarial.jsonl
+
+# Eval harness generated outputs
+eval/traces/traces.jsonl
+eval/results/
+eval/manifest.json

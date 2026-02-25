@@ -1,0 +1,47 @@
+define user ask irreversible
+  "irreversible"
+  "purge"
+  "wipe"
+  "destroy"
+  "nuke"
+  "IRREVERSIBLE"
+
+define user ask read
+  "read"
+  "get"
+  "list"
+  "view"
+  "show"
+  "READ"
+
+define user ask write
+  "write"
+  "update"
+  "create"
+  "WRITE"
+
+define user ask delete
+  "delete"
+  "remove"
+  "DELETE"
+
+define bot deny irreversible
+  "DENY"
+
+define bot allow read
+  "ALLOW"
+
+define bot require confirmation delete
+  "REQUIRE_CONFIRMATION"
+
+define flow safety check
+  user ask irreversible
+  bot deny irreversible
+
+define flow allow reads
+  user ask read
+  bot allow read
+
+define flow confirm deletes
+  user ask delete
+  bot require confirmation delete

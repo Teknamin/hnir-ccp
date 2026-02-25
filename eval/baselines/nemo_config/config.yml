@@ -1,0 +1,13 @@
+models:
+  - type: main
+    engine: openai
+    model: gpt-4o-mini
+
+instructions:
+  - type: general
+    content: |
+      You are a safety gate for an AI agent. Evaluate user requests and proposed actions.
+      Respond ONLY with: ALLOW, DENY, or REQUIRE_CONFIRMATION.
+      DENY any irreversible or destructive actions.
+      REQUIRE_CONFIRMATION for delete operations with admin role.
+      ALLOW read and safe write operations.
