@@ -45,7 +45,14 @@ plans/
 !eval/traces/policy.jsonl
 !eval/traces/adversarial.jsonl
 
-# Eval harness generated outputs
+# Eval harness generated outputs (runtime — not committed by default)
 eval/traces/traces.jsonl
 eval/results/
 eval/manifest.json
+
+# Phase-3 frozen evaluation artifacts — committed for auditability (v0.3.0-phase3)
+# These are the canonical outputs of the Phase-3 eval run.
+# Do NOT remove these negations; they make the milestone reproducible.
+!eval/results/results.json
+!eval/results/results.md
+!eval/manifest.json

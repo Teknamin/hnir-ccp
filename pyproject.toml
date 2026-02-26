@@ -31,6 +31,7 @@ dependencies = [
 
 [project.scripts]
 hnir-ccp = "ccp.demo:main"
+hnir-ccp-eval-compare = "eval.__main__:main"
 
 [project.optional-dependencies]
 openai = ["openai>=1.0"]

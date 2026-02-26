@@ -119,6 +119,13 @@ By formalizing deterministic conversational control as a safety architecture, CC
 
 ### Measuring CCP's Effectiveness
 
+> **Scope note (Phase-3):**
+> Phase-3 evaluation measures deterministic correctness, safety gating, and operational reliability
+> of the HNIR-CCP control plane in isolation. The evaluated system intentionally makes zero LLM calls.
+> Metrics reflect enforcement accuracy and performance of policy, RBAC, and state-machine constraints —
+> not semantic reasoning quality or end-to-end conversational intelligence. Phase-4 will evaluate
+> hybrid CCP + LLM systems and regression safety across probabilistic layers.
+
 The value of the CCP architecture is evaluated using reproducible benchmarking workflows contained within this repository. The evaluation harness and benchmarking datasets are designed to be publicly reproducible to support community validation and comparative research, to empirically validate safety and reliability claims associated with deterministic conversational control. The evaluation harness is designed to run against standardized evaluation datasets (covering both clean and ambiguous inputs) to measure the following:
 
 *   **Deterministic Diversion Rate:** The percentage of requests handled without LLM inference.
