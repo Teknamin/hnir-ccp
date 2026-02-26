@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-02-26T03:09:03.430926Z",
+  "git_commit": "79fa940",
+  "hardware": {
+    "platform": "macOS-14.6-arm64-arm-64bit",
+    "python_version": "3.9.6",
+    "processor": "arm",
+    "machine": "arm64",
+    "node": "Aravinds-MBP.attlocal.net"
+  },
+  "eval_parameters": {
+    "temperature": 0,
+    "timeout_seconds": 60.0,
+    "llm_model": "gpt-4o-mini",
+    "llm_provider": "openai",
+    "pricing_input_per_1m_usd": 0.15,
+    "pricing_output_per_1m_usd": 0.6,
+    "ccp_latency_runs_per_scenario": 3
+  },
+  "package_versions": {
+    "pydantic": "2.12.5",
+    "openai": "1.109.1",
+    "anthropic": "0.83.0",
+    "nemoguardrails": "0.17.0",
+    "guardrails": "not_installed",
+    "garak": "not_installed"
+  },
+  "trace_file_sha256": {
+    "control.jsonl": "1caea5086d4224133dee1ec1cfd71a160907695aa5f15361d25230770b71ecdd",
+    "state.jsonl": "5f9ac913861b6926324cdfbed72c0e6ddbd759c24cfd394ce208b8e8d5c3dffb",
+    "policy.jsonl": "922e8dc2404bb68b8665f44e8fc8e46c61d8ca10011b561c1a94cef629264f7d",
+    "adversarial.jsonl": "4d26f6186aff6934c45890f5a12df020745af0a7f13408ad525882a6efe15867"
+  },
+  "total_scenarios": 100
+}

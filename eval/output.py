@@ -196,7 +196,7 @@ def write_results_json(
     }
 
     with open(out_path, "w") as fh:
-        json.dump(payload, fh, indent=2, default=str)
+        json.dump(payload, fh, sort_keys=True, indent=2, ensure_ascii=False, default=str)
 
     return out_path
 
@@ -675,7 +675,7 @@ def write_results_md(
                 "| scenario_id | expected | actual | layer | reason_code |",
                 "| --- | --- | --- | --- | --- |",
             ]
-            for f in failures:
+            for f in sorted(failures, key=lambda r: r.scenario_id):
                 lines.append(
                     f"| {f.scenario_id} | {f.expected_decision} | "
                     f"{f.actual_decision} | {f.actual_layer} | {f.actual_reason_code} |"

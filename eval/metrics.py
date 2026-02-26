@@ -50,12 +50,20 @@ from typing import Callable, Dict, List, Optional, Tuple
 from eval.schema import ScenarioResult, TraceEntry
 
 
-def _percentile(sorted_vals: List[float], pct: float) -> Optional[float]:
-    """Return the pct-th percentile of a pre-sorted list."""
+def _percentile(sorted_vals: List[float], p: float) -> Optional[float]:
+    """Return the p-th percentile of a pre-sorted list.
+
+    Uses integer-only index arithmetic with no interpolation:
+        idx = min(N-1, int(p * N)); return sorted_vals[idx]
+
+    Returns the raw observed value — NO rounding in this function.
+    Rounding for display is applied only in output/markdown layers.
+    Changing this formula invalidates all reported baselines (ADR-001, Decision 4).
+    """
     if not sorted_vals:
         return None
-    idx = max(0, int(pct * len(sorted_vals)) - 1)
-    return round(sorted_vals[idx], 2)
+    idx = min(len(sorted_vals) - 1, int(p * len(sorted_vals)))
+    return sorted_vals[idx]
 
 
 def _latency_stats(values: List[float]) -> Dict:
@@ -114,6 +122,7 @@ def compute_policy_compliance(results: List[ScenarioResult]) -> Dict:
         round(100.0 * intersection_passed / intersection_count, 2)
         if intersection_count > 0 else None
     )
+    compliance["intersection_count"] = intersection_count
     return compliance
 
 
@@ -160,6 +169,10 @@ def compute_reliability(results: List[ScenarioResult]) -> Dict:
         evaluated: non-skipped scenario count.
 
     Rates are None when evaluated == 0 (all scenarios were skipped).
+
+    Note on denominators (ADR-001, Decision 2):
+      - timeout_rate, crash_rate, no_decision_rate: denominator = non-skipped scenarios only.
+      - na_rate: denominator = ALL scenarios (by definition — measures out-of-scope fraction).
     """
     total = len(results)
     skipped = sum(1 for r in results if r.is_skipped)
@@ -177,8 +190,8 @@ def compute_reliability(results: List[ScenarioResult]) -> Dict:
             "evaluated": 0,
         }
 
-    timeouts = sum(1 for r in results if r.is_timeout)
-    crashes = sum(1 for r in results if r.is_crash)
+    timeouts = sum(1 for r in results if r.is_timeout and not r.is_skipped)
+    crashes = sum(1 for r in results if r.is_crash and not r.is_skipped)
     no_decisions = sum(1 for r in results if r.is_no_decision and not r.is_skipped)
 
     return {
