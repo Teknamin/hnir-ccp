@@ -4,8 +4,6 @@ All tests run against MockAdapter by default (no live API calls).
 Set RUN_LIVE_TESTS=1 to also run against real adapters.
 """
 
-import pytest
-
 from ccp.integration.adapters import AdapterFactory
 from ccp.integration.adapters.mock import MockAdapter
 from ccp.integration.interceptor import CCPInterceptor

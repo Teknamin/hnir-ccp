@@ -48,7 +48,6 @@ class TestAdapterFactory:
 
     def test_create_openai_raises_import_error_when_not_installed(self, monkeypatch):
         """If openai is not installed, AdapterFactory.create('openai') raises ImportError."""
-        import importlib
         import sys
         # Temporarily hide the openai module if present
         original = sys.modules.get("openai")
