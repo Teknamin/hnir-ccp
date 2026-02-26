@@ -129,7 +129,7 @@ class TestCCPInterceptor:
         ccp.process_input(UserInput(text="go"), action)
         assert ccp.session.current_state == ConversationState.TRIAGE
 
-        result = ccp.process_input(UserInput(text="reset"))
+        ccp.process_input(UserInput(text="reset"))
         assert ccp.session.current_state == ConversationState.INTAKE
 
     def test_status_command(self):
