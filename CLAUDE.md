@@ -1,5 +1,9 @@
 # CLAUDE.md
 
+## Project Status
+
+HNIR-CCP is at v1.0. This is a completed research artifact. Changes should be limited to bug fixes and documentation corrections.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview

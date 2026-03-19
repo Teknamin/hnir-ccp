@@ -1,11 +1,16 @@
 # HNIR-CCP Roadmap
 
-This document outlines the long-term vision and high-level roadmap for the HNIR-CCP project. It is a living document that will evolve as the project matures and as we receive feedback from the community.
+## Completed
 
-## High-Level Goals
+### Phase 1: Repository Foundation ✅
+Project structure, documentation, development infrastructure.
 
-*   **v1 (Current Scope):** Establish the core CCP architecture, provide a reference implementation, and deliver a comprehensive evaluation harness to validate the core theses of the project.
-*   **v2 (Future):** Expand the library of deterministic control primitives, develop more sophisticated miss-clustering and rule-suggestion workflows, and explore integrations with additional LLM agent frameworks.
-*   **Long-Term Vision:** To establish CCP as a standard, community-driven safety middleware layer for building reliable, production-grade agentic AI systems.
+### Phase 2: Core Implementation ✅
+Deterministic command registry, policy enforcement pipeline, confidence/safety evaluation engine, audit trail.
 
-*(This document will be updated as the project progresses.)*
+### Phase 3: Evaluation ✅
+Reproducible benchmarking across control commands, policy-gated actions, state transitions, and adversarial probes.
+
+## Status
+
+v1.0 research milestone reached. Phase 3 validated the core thesis: deterministic control planes reliably enforce governance in AI agent systems without LLM inference.

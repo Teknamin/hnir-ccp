@@ -4,8 +4,8 @@ build-backend = "setuptools.backends._legacy:_Backend"
 
 [project]
 name = "hnir-ccp"
-version = "0.1.0"
-description = "Conversation Control Plane — deterministic safety middleware for LLM agents"
+version = "1.0.0"
+description = "Deterministic control plane for AI agent systems — policy enforcement and safety gating without LLM inference"
 readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.9"

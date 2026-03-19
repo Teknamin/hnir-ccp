@@ -1,17 +1,23 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
-authors:
-  - family-names: "Ravi"
-    given-names: "Aravind"
-    orcid: "https://orcid.org/0009-0001-0452-0754"
-    email: "aravind@raviaravind.com"
-title: "HNIR-CCP: A Conversation Control Plane"
-version: 0.1.0
-date-released: 2026-02-06
+type: software
+title: "HNIR-CCP: A Deterministic Control Plane for AI Agent Systems"
+version: 1.0.0
+date-released: "2026-03-18"
+url: "https://github.com/Teknamin/hnir-ccp"
 repository-code: "https://github.com/Teknamin/hnir-ccp"
-license: "Apache-2.0"
-references:
-  - type: article
-    title: "Hybrid Neuro-Symbolic Intent Router (HNIR)"
-    doi: "https://zenodo.org/records/18110920"
-    url: "https://zenodo.org/records/18110920"
+license: Apache-2.0
+authors:
+  - family-names: Ravi
+    given-names: Aravind
+    email: aravind@raviaravind.com
+    affiliation: "Independent Researcher, Teknamin Labs"
+keywords:
+  - deterministic control plane
+  - AI agent governance
+  - policy enforcement
+  - LLM safety
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.18110920"
+    description: "Zenodo preprint"
