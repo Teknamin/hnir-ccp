@@ -37,22 +37,9 @@ htmlcov/
 # Local planning docs (not for public repo)
 plans/
 
-# Generated audit logs (runtime artifacts)
+# Evaluation data — withheld for research integrity
+eval/
+prompts/
+datasets/
 *.jsonl
-# But allow committed eval trace files
-!eval/traces/control.jsonl
-!eval/traces/state.jsonl
-!eval/traces/policy.jsonl
-!eval/traces/adversarial.jsonl
-
-# Eval harness generated outputs (runtime — not committed by default)
-eval/traces/traces.jsonl
-eval/results/
-eval/manifest.json
-
-# Phase-3 frozen evaluation artifacts — committed for auditability (v0.3.0-phase3)
-# These are the canonical outputs of the Phase-3 eval run.
-# Do NOT remove these negations; they make the milestone reproducible.
-!eval/results/results.json
-!eval/results/results.md
-!eval/manifest.json
+*.csv
