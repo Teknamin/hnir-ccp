@@ -47,7 +47,7 @@ Evaluated on 100 scenarios spanning control commands, policy-gated actions, stat
 | P99 latency | ~34µs |
 | LLM calls for control decisions | 0 |
 
-Evaluation artifacts are deterministic and reproducible. See `eval/` for the harness and datasets.
+Evaluation artifacts are deterministic and reproducible. See the [Evaluation Dataset](#evaluation-dataset) section below.
 
 ## Relationship to Existing Approaches
 
@@ -64,10 +64,22 @@ Analogous to admission controllers in Kubernetes or policy engines in zero-trust
 ```
 ccp/      — Core control plane implementation
 config/   — Policy and command registry configuration
-eval/     — Evaluation harness and benchmark datasets
 tests/    — Test suite
 docs/adr/ — Architecture Decision Records
 ```
+
+## Evaluation Dataset
+
+This repository does not include the evaluation dataset used in the accompanying study.
+
+The dataset consists of structured governance scenarios covering:
+- Control commands and baseline behaviors
+- Safety triggers and adversarial inputs
+- Policy enforcement cases (RBAC, state machine, confirmation rules)
+
+The dataset is withheld to preserve research integrity and intellectual property.
+
+A subset or full release may be provided in future work. For research collaboration inquiries, contact the authors.
 
 ## Limitations
 
