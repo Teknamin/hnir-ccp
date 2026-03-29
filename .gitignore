@@ -37,6 +37,9 @@ htmlcov/
 # Local planning docs (not for public repo)
 plans/
 
+# Claude Code internal worktree directory
+.claude/
+
 # Evaluation data — withheld for research integrity
 eval/
 prompts/
