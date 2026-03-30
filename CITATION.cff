@@ -19,5 +19,23 @@ keywords:
   - LLM safety
 identifiers:
   - type: doi
+    value: "10.5281/zenodo.19324744"
+    description: "Zenodo preprint (v2 — Empirical Evaluation)"
+  - type: doi
     value: "10.5281/zenodo.18110920"
-    description: "Zenodo preprint"
+    description: "Zenodo preprint (v1 — Architecture)"
+references:
+  - type: article
+    title: "HNIR-CCP: Empirical Evaluation of Deterministic Control Planes for AI Agent Governance"
+    authors:
+      - family-names: Ravi
+        given-names: Aravind
+    year: 2026
+    doi: "10.5281/zenodo.19324744"
+  - type: article
+    title: "HNIR: A Deterministic Intent Routing Control Plane for Distributed Conversational Systems"
+    authors:
+      - family-names: Ravi
+        given-names: Aravind
+    year: 2025
+    doi: "10.5281/zenodo.18110920"

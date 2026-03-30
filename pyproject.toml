@@ -10,22 +10,22 @@ readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.9"
 authors = [
-    {name = "Aravind Ravi", email = "aravind@teknamin.com"},
+  {name = "Aravind Ravi", email = "aravind@raviaravind.com"},
 ]
 keywords = ["llm", "safety", "control-plane", "agents", "middleware"]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
-    "Intended Audience :: Developers",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
-    "pyyaml>=6.0",
-    "pydantic>=2.0",
+  "pyyaml>=6.0",
+  "pydantic>=2.0",
 ]
 
 [project.scripts]
@@ -49,5 +49,5 @@ line-length = 100
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = [
-    "live: marks tests as requiring live API credentials (deselect with '-m not live')",
+  "live: marks tests as requiring live API credentials (deselect with '-m not live')",
 ]
