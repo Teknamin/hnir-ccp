@@ -1,19 +1,37 @@
 > **Status: v1.0 — Research milestone reached.**
-> This repository is a completed research artifact and the reference implementation evaluated in the HNIR-CCP study.
+> This repository is a completed research artifact and the deterministic baseline evaluated in the HNIR-CCP study.
 
 # HNIR-CCP: A Deterministic Control Plane for AI Agent Systems
 
-HNIR-CCP separates deterministic policy enforcement from probabilistic reasoning in AI agent systems.
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19324744.svg)](https://doi.org/10.5281/zenodo.19324744)
 
-The model reasons. The control plane governs.
+HNIR-CCP is a **pre-inference governance system** for AI agent systems. It separates deterministic policy enforcement from probabilistic reasoning — the model reasons, the control plane governs. Certain operations — control commands, policy enforcement, state transitions — require correctness guarantees that probabilistic models cannot provide.
+
+This repository provides the deterministic baseline evaluated in the [HNIR-CCP empirical study](https://doi.org/10.5281/zenodo.19324744). It is **not** a prompt wrapper, a guardrails layer, or a post-hoc filter. Control logic runs before the LLM is ever invoked. This repository is not intended to reproduce the full evaluation results; the empirical study is described in the accompanying preprint.
+
+## Quickstart
+
+```bash
+pip install -e .
+python -m ccp           # 12-step scripted demo (deterministic, no API keys)
+python -m ccp -i        # interactive REPL with mock LLM
+```
+
+The scripted demo walks through control commands, policy enforcement, state transitions, adversarial blocking, and audit logging using a mock LLM backend. No external dependencies or API keys are required.
+
+The demo uses a healthcare workflow (intake, triage, recommendation, confirmation, execution) as an illustrative domain. HNIR-CCP is domain-agnostic; the state machine and policies are defined in YAML configuration.
 
 ## Research Context
 
 This repository is part of a broader research arc:
 
-1. **[HNIR v1 — Theory](https://doi.org/10.5281/zenodo.18110920):** Introduced the architecture and design principles for deterministic intent routing in conversational systems.
-2. **HNIR-CCP — Implementation (this repo):** A practical, deterministic control plane that enforces policy, handles control commands, and blocks invalid transitions before they reach an LLM.
-3. **[HNIR-CCP v2 — Empirical Evidence](https://doi.org/10.5281/zenodo.19324744):** Presents a comparative evaluation of this implementation against frontier LLMs (GPT-4o, o3, Claude Sonnet, Claude Opus, Gemini 2.5 Pro) and guardrail frameworks (NeMo Guardrails, Guardrails AI) across 100 structured governance scenarios.
+1. **[HNIR v1 — Theory](https://doi.org/10.5281/zenodo.18110920):** Architecture and design principles for deterministic intent routing in conversational systems (2025).
+2. **HNIR-CCP — Implementation (this repo):** A practical deterministic control plane that enforces policy, handles control commands, and blocks invalid state transitions before they reach an LLM.
+3. **[HNIR-CCP v2 — Empirical Evidence](https://doi.org/10.5281/zenodo.19324744):** Comparative evaluation against frontier LLMs (GPT-4o, o3, Claude Sonnet, Claude Opus, Gemini 2.5 Pro) and guardrail frameworks (NeMo Guardrails, Guardrails AI) across 100 structured governance scenarios (2026).
+4. **Blog post:** [HNIR-CCP vs LLMs](https://www.teknamin.com/blog/hnir-ccp-vs-llms/)
+
+> **Note:** The evaluation harness, scoring logic, and scenario dataset are maintained separately and are not included in this repository. See the [v2 preprint](https://doi.org/10.5281/zenodo.19324744) for methodology and results.
 
 ## Thesis
 
@@ -34,6 +52,18 @@ Agent Input → Control Plane → Policy + Safety Check
 
 LLM reasoning cannot bypass deterministic policy or control decisions.
 
+The `ccp/` package implements the control plane as five modules:
+
+| Module | Responsibility |
+|--------|---------------|
+| `control/` | Deterministic command handler — recognizes control signals (help, cancel, undo, reset, status) via keyword matching. No LLM involved. |
+| `policy/` | Policy enforcement engine — evaluates LLM-proposed actions against YAML-defined rules. Returns ALLOW, DENY, or REQUIRE_CONFIRMATION. |
+| `state/` | Conversation state machine — validates transitions and action-type permissions per state. |
+| `audit/` | Structured decision logging with reason codes and full request traces. |
+| `integration/` | LLM adapter layer — pre-execution interception of LLM-proposed actions. Mock, OpenAI, and Anthropic backends. |
+
+All policy rules and state definitions are in `config/` as YAML. The control plane is configuration-driven.
+
 ## Safety Invariants
 
 1. Destructive or irreversible actions require explicit confirmation.
@@ -44,7 +74,7 @@ LLM reasoning cannot bypass deterministic policy or control decisions.
 
 ## Evaluation Results
 
-Evaluated on 100 scenarios spanning control commands, policy-gated actions, state transitions, and adversarial probes.
+The following results are reported in the [v2 preprint](https://doi.org/10.5281/zenodo.19324744), evaluated using a separate, private harness on 100 structured governance scenarios. They are included here for reference; the evaluation code is not part of this repository.
 
 | Metric | Result |
 |--------|--------|
@@ -54,8 +84,6 @@ Evaluated on 100 scenarios spanning control commands, policy-gated actions, stat
 | P50 latency | ~24µs |
 | P99 latency | ~34µs |
 | LLM calls for control decisions | 0 |
-
-Evaluation artifacts are deterministic and reproducible. See the [Evaluation Dataset](#evaluation-dataset) section below.
 
 For the full comparative analysis against LLMs and guardrail frameworks, see the [v2 preprint](https://doi.org/10.5281/zenodo.19324744).
 
@@ -72,15 +100,15 @@ Analogous to admission controllers in Kubernetes or policy engines in zero-trust
 ## Project Structure
 
 ```
-ccp/    — Core control plane implementation
-config/ — Policy and command registry configuration
-tests/  — Test suite
+ccp/      — Core control plane implementation
+config/   — Policy and command registry configuration (YAML)
+tests/    — Test suite
 docs/adr/ — Architecture Decision Records
 ```
 
 ## Evaluation Dataset
 
-This repository does not include the evaluation dataset used in the accompanying study. The evaluation harness is maintained in a separate, private project.
+This repository does not include the evaluation dataset or harness used in the accompanying study. The evaluation harness, scoring logic, and scenario dataset are maintained separately and are not included in this repository. The methodology is fully described in the [v2 preprint](https://doi.org/10.5281/zenodo.19324744).
 
 The dataset consists of structured governance scenarios covering:
 

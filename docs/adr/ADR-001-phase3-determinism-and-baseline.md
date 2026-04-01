@@ -4,6 +4,10 @@
 **Date:** 2026-02-25
 **Deciders:** Phase-3 implementation team
 
+> **Note:** This ADR documents design decisions for the evaluation harness, which is maintained
+> in a separate private repository. File paths and function names referenced below refer to that
+> internal codebase, not this public repository.
+
 ---
 
 ## Context

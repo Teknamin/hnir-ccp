@@ -51,7 +51,7 @@ The `ccp/` package has five modules forming the control plane pipeline:
 
 ### Configuration
 
-Policy rules will be defined in YAML (not yet implemented). The control plane is config-driven: policy changes require config updates, not code changes.
+Policy rules are defined in YAML (`config/policies.yaml`, `config/states.yaml`, `config/commands.yaml`). The control plane is config-driven: policy changes require config updates, not code changes.
 
 ## Key Design Decisions
 
@@ -63,4 +63,4 @@ Policy rules will be defined in YAML (not yet implemented). The control plane is
 
 ## Module Status
 
-Currently at Phase 1 (skeleton). All modules contain only docstrings and `__init__.py` files. Phase 2 will implement the v0 demo.
+v1.0 research milestone complete. All five core modules are fully implemented and tested. The evaluation harness is maintained in a separate, private repository.

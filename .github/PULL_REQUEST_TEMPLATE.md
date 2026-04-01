@@ -39,12 +39,10 @@ Please ensure the following items are addressed before merging:
 
 ### Security and Safety Checklist
 
-- [ ] **Ethical Review:** Have the ethical implications of this change been considered? (Refer to `ETHICS.md`)
+- [ ] **Ethical Review:** Have the ethical implications of this change been considered?
     - Does this change have any potential for misuse?
     - Could this change introduce or exacerbate bias?
-    - Is this change aligned with our project's ethical principles?
-- [ ] **Policy Review:** Does this change align with the defined policies in `DATA_POLICY.md` and `GOVERNANCE.md`?
-- [ ] **Safety Invariants:** Does this change uphold the [Safety Invariants Enforced by CCP](#safety-invariants-enforced-by-ccp)?
+- [ ] **Safety Invariants:** Does this change uphold the safety invariants?
     - [ ] Destructive or irreversible actions require explicit user confirmation.
     - [ ] Policy-bound operations must pass all authorization and workflow validation steps.
     - [ ] Conversational state transitions must be deterministic and auditable.
